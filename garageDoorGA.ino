@@ -41,10 +41,6 @@ const Int32 BUTTON_PIN       = 15;    // button pin
 WiFiServer server(80); // Set web server port number to 80
 String header = "";    // Variable to store the HTTP request
 
-// Auxiliar variables to store the current output state
-String output5State = "off"; // TODO remove this variable
-String output4State = "off"; // TODO remove this variable
-
 //---------------------------------------------------------------
 // setup
 //
@@ -82,7 +78,8 @@ void setup()
     DBG_PRINT("setup", "." );
   }
 
-  DBG_PRINT("setup", String( "WiFi connected. IP Address = " + WiFi.localIP() ) );
+  Serial.print("Wifi connecte. ip address = ");
+  Serial.println(WiFi.localIP() );
 
   // set the LED to solid to indicate connected
   digitalWrite(LED_PIN, HIGH); // blink the LED button to indicate connection status
@@ -119,35 +116,16 @@ void loop()
 
           if (currentLine.length() == 0) 
           {
+            // parse any specific requests
             parseHTTPRequest();
             setHTTPHeader(client);
 
             // Web Page Heading
             client.println("<body><h1>Garage Door Web Server</h1>");
-            
-            // Display current state, and ON/OFF buttons for GPIO 5  
-            client.println("<p>GPIO 5 - State " + output5State + "</p>");
-            // If the output5State is off, it displays the ON button       
-            if (output5State=="off") 
-            {
-              client.println("<p><a href=\"/5/on\"><button class=\"button\">ON</button></a></p>");
-            } 
-            else 
-            {
-              client.println("<p><a href=\"/5/off\"><button class=\"button button2\">OFF</button></a></p>");
-            } 
-               
-            // Display current state, and ON/OFF buttons for GPIO 4  
-            client.println("<p>GPIO 4 - State " + output4State + "</p>");
-            // If the output4State is off, it displays the ON button       
-            if (output4State=="off") 
-            {
-              client.println("<p><a href=\"/4/on\"><button class=\"button\">ON</button></a></p>");
-            } 
-            else 
-            {
-              client.println("<p><a href=\"/4/off\"><button class=\"button button2\">OFF</button></a></p>");
-            }
+
+            // Display info for the open/close button of the garage door 
+            client.println("<p>Click to open/close the Garage Door </p>");
+            client.println("<p><a href=\"/garage/toggle\"><button class=\"button\">OPEN / CLOSE</button></a></p>");
             client.println("</body></html>");
             
             // The HTTP response ends with another blank line
@@ -178,42 +156,28 @@ void loop()
 void parseHTTPRequest()
 {
   // turns the GPIOs on and off
-  // TODO remove the outputXStates
 
-  if (header.indexOf("GET /5/on") >= 0) 
-  {
-    DBG_PRINT("parseHTTPRequest", "GPIO 5 on");
-    output5State = "on";
-  } 
-  else if (header.indexOf("GET /5/off") >= 0) 
-  {
-    DBG_PRINT("parseHTTPRequest", "GPIO 5 off");
-    output5State = "off";
-  } 
-  else if (header.indexOf("GET /4/on") >= 0) 
-  {
-    DBG_PRINT("parseHTTPRequest", "GPIO 4 on");
-    output4State = "on";
-  } 
-  else if (header.indexOf("GET /4/off") >= 0) 
-  {
-    DBG_PRINT("parseHTTPRequest", "GPIO 4 off");
-    output4State = "off";
-  }
-  else if (header.indexOf("PUT /garage/open") >= 0)
+  if (header.indexOf("GET /garage/open") >= 0)
   {
     DBG_PRINT("parseHTTPRequest", "open garage door");
     //toggleGarageDoorButton();
     digitalWrite(LED_PIN, HIGH);
   }
-  else if (header.indexOf("PUT /garage/close") >= 0)
+  else if (header.indexOf("GET /garage/close") >= 0)
   {
     DBG_PRINT("parseHTTPRequest", "close garage door");
     //toggleGarageDoorButton();
     digitalWrite(LED_PIN, LOW);
   }
+  else if (header.indexOf("GET /garage/toggle") >= 0)
+  {
+    DBG_PRINT("parseHTTPRequest", "open/close garage door");
+    //toggleGarageDoorButton();
+    digitalWrite(LED_PIN, LOW);
+    delay(500);
+    digitalWrite(LED_PIN, HIGH);
+  } 
 }
-
 
 //---------------------------------------------------------------
 // toggleGarageDoorButton
