@@ -13,6 +13,8 @@ Garage door opener using Google Assistant, largely based on garageDoorNotifier
 ### Circuit
 The circuit is pretty simple. A GPIO of the Sparkfun Thing ESP8266 activates a relay. The relay is hotwired into a garage door opener button to fake "press" the button. 
 
+![Circuit Diagram](https://raw.githubusercontent.com/dmacattack/garageDoorGA/master/pics/garageDoorGA.png)
+
 ### Programming
 * Download/clone this github source code
 * Open the project in Arduino IDE
