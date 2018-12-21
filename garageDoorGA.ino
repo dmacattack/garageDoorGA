@@ -33,7 +33,7 @@ typedef char  Int8;
 String mVersionNumber        = "-------VERSION 0.1-------";
 const Int32 LED_PIN          = LED_BUILTIN;     // ESP8266 onboard, green LED
 const Int32 TOGGLE_DURATION  = 1000;  // full second
-const Int32 BUTTON_PIN       = 15;    // button pin
+const Int32 BUTTON_PIN       = 13;    // button pin
 
 //---------------------------------------------------------------
 // member variables
@@ -78,7 +78,7 @@ void setup()
     DBG_PRINT("setup", "." );
   }
 
-  Serial.print("Wifi connecte. ip address = ");
+  Serial.print("Wifi connected. ip address = ");
   Serial.println(WiFi.localIP() );
 
   // set the LED to solid to indicate connected
@@ -160,22 +160,17 @@ void parseHTTPRequest()
   if (header.indexOf("GET /garage/open") >= 0)
   {
     DBG_PRINT("parseHTTPRequest", "open garage door");
-    //toggleGarageDoorButton();
-    digitalWrite(LED_PIN, HIGH);
+    toggleGarageDoorButton();
   }
   else if (header.indexOf("GET /garage/close") >= 0)
   {
     DBG_PRINT("parseHTTPRequest", "close garage door");
-    //toggleGarageDoorButton();
-    digitalWrite(LED_PIN, LOW);
+    toggleGarageDoorButton();
   }
   else if (header.indexOf("GET /garage/toggle") >= 0)
   {
     DBG_PRINT("parseHTTPRequest", "open/close garage door");
-    //toggleGarageDoorButton();
-    digitalWrite(LED_PIN, LOW);
-    delay(500);
-    digitalWrite(LED_PIN, HIGH);
+    toggleGarageDoorButton();
   } 
 }
 
